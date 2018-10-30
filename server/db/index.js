@@ -73,7 +73,7 @@ Comment.prototype.toJSONFor = function(user) {
     }
 }
 
-Article.prototype.toJSONFor = function(user) {
+Article.prototype.toAuthJSON = function(user) {
   return {
     slug: this.slug,
     title: this.title,

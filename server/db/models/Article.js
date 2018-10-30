@@ -23,8 +23,8 @@ module.exports = {
         body: {
             type: DT.STRING(500)
         },
-        tagList: [{
+        tagList: {
             type: DT.STRING(500)
-        }]
+        }
     }
 }
