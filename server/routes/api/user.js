@@ -1,6 +1,7 @@
 const express = require('express')
 const sequelize = require('sequelize')
 const jwt = require('jsonwebtoken')
+var auth = require('../auth')
 var op = sequelize.Op
 
 const {
@@ -10,11 +11,53 @@ const {
 const router = express()
 
 
-router.get('/user', (req, res) => {
-    console.log(req.body)
-    res.send('From API route')
+router.get('/user', auth.required, async (req, res,next) => {
+    const currentUser = await User.findOne({
+        where: {
+            id: req.payload.id
+        }
+    })
+    if(!currentUser){
+        return res.sendStatus(401);
+    }
+    return res.json({user: currentUser.toAuthJSON()});
 })
 
+router.put('/user', auth.required, async (req, res,next) => {
+    const currentUser = await User.findOne({
+        where: {
+            id: req.payload.id
+        }
+    }).catch(next)
+    if(!currentUser){
+        return res.sendStatus(401);
+    } else {
+  
+      // only update fields that were actually passed...
+      if(req.body.username !== undefined){
+        currentUser.username = req.body.username;
+      }
+      if(req.body.email !== undefined){
+        currentUser.email = req.body.email;
+      }
+      if(req.body.bio !== undefined){
+        currentUser.bio = req.body.bio;
+      }
+      if(req.body.image !== undefined){
+        currentUser.image = req.body.image;
+      }
+      if(req.body.password !== undefined){
+        currentUser.password= req.body.password;
+      }
+      currentUser.save().then((result) => {
+        console.log(result)
+        return res.json({
+            user: currentUser.toAuthJSON()
+        });
+
+    }).catch(next);
+    
+  }});
 
 router.post('/users', async (req, res,next) => {
     console.log("new user entering")
@@ -24,7 +67,9 @@ router.post('/users', async (req, res,next) => {
         password: req.body.password
     })
     user.save().then((result) => {
-        return res.json({user: user.toAuthJSON()});
+        return res.json({
+            user: user.toAuthJSON()
+        });
         
     }).catch((err) => {
         console.log(err)

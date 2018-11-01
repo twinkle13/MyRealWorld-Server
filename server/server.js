@@ -1,5 +1,4 @@
 const express = require('express')
-const bodyParser = require('body-parser')
 const {
     db
   } = require('./db/index.js')
@@ -32,8 +31,9 @@ app.use(function(err, req, res, next) {
     }});
   });
 
-db.sync()
-  .then(() => {
+db.sync({
+  force: true
+}).then(() => {
     console.log('Database synced')
     app.listen(PORT, () => {
       console.log('Server started http://localhost:'+PORT)

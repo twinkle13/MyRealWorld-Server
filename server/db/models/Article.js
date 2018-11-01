@@ -5,7 +5,7 @@ const DT = Sequelize.DataTypes
 module.exports = {
     article: {
         slug: {
-            type: DT.STRING(50),
+            type: DT.STRING(150),
             unique: {
                 args: true,
                 msg: 'is already taken.'
@@ -15,15 +15,12 @@ module.exports = {
             }
         },
         title: {
-            type: DT.STRING(250)
+            type: DT.STRING(150)
         },
         description:{
             type: DT.STRING(500)
         },
         body: {
-            type: DT.STRING(500)
-        },
-        tagList: {
             type: DT.STRING(500)
         }
     }

@@ -7,6 +7,7 @@ const {
 } = require('./models/userModel')
 const { comment } = require('./models/Comment')
 const { article } = require('./models/Article')
+const { tag } = require('./models/Tag')
 
 const db = new Sequelize({
   dialect: 'sqlite',
@@ -18,12 +19,11 @@ const Comment = db.define('Comment', comment)
 const Article = db.define('Article', article , {
   validate: {
     validateSlug() {
-      if (!this.slug) {
         this.slug = slug(this.title) + '-' + (Math.random() * Math.pow(36, 6) | 0).toString(36)
-      }
+      
     }
   }
-})
+} )
 Article.belongsTo(User )
 User.hasMany(Article)
 
@@ -67,12 +67,12 @@ User.prototype.toProfileJSONFor = function (user) {
 Comment.prototype.toJSONFor = function(user) {
   return {
       id: this.id,
-      body: this.body,
       createdAt: this.createdAt,
-      author: toProfileJSONFor(user)
+      updatedAt: this.updatedAt,
+      body: this.body,
+      author: user.toProfileJSONFor(user)
     }
 }
-
 Article.prototype.toAuthJSON = function(user) {
   return {
     slug: this.slug,
@@ -82,7 +82,7 @@ Article.prototype.toAuthJSON = function(user) {
     createdAt: this.createdAt,
     updatedAt: this.updatedAt,
     tagList: parseStringIntoArray(this.tagList),
-    author: this.toProfileJSONFor(user)
+    author: user.toProfileJSONFor(user)
     }
 }
 
