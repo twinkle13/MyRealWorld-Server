@@ -10,30 +10,38 @@ const {
 
 const router = express()
 
-
+/**
+ * Get Request to fetch information of the current user logged in
+ */
 router.get('/user', auth.required, async (req, res,next) => {
+    // fetching current user logged in
     const currentUser = await User.findOne({
         where: {
             id: req.payload.id
         }
     })
+    // if user not logged in return
     if(!currentUser){
         return res.sendStatus(401);
     }
     return res.json({user: currentUser.toAuthJSON()});
 })
 
+/**
+ * Put request to update information of the current user logged in
+ */
 router.put('/user', auth.required, async (req, res,next) => {
+     // fetching current user logged in
     const currentUser = await User.findOne({
         where: {
             id: req.payload.id
         }
     }).catch(next)
+    // if user not logged in return
     if(!currentUser){
         return res.sendStatus(401);
     } else {
   
-      // only update fields that were actually passed...
       if(req.body.username !== undefined){
         currentUser.username = req.body.username;
       }
@@ -59,8 +67,12 @@ router.put('/user', auth.required, async (req, res,next) => {
     
   }});
 
+/**
+ * post request to register new user
+ */
 router.post('/users', async (req, res,next) => {
     console.log("new user entering")
+    //create new user
     var user = User.build({
         username: req.body.username,
         email: req.body.email,
@@ -71,12 +83,12 @@ router.post('/users', async (req, res,next) => {
             user: user.toAuthJSON()
         });
         
-    }).catch((err) => {
-        console.log(err)
-        
-    });
+    }).catch(next);
 })
 
+/**
+ * post request for logging in
+ */
 router.post('/users/login', async (req, res) => {
     if(!req.body.email){
         return res.status(422).json({
@@ -94,7 +106,7 @@ router.post('/users/login', async (req, res) => {
     }
     console.log("login user entering")
     const userData = req.body
-    let whereClause =[]
+    let whereClause =[] // for builing where clause
     whereClause.push({
         email: userData.email
     })

@@ -31,8 +31,10 @@ app.use(function(err, req, res, next) {
     }});
   });
 
-db.sync({
-  force: true
+db.sync({/*
+  force: true */
+/*
+  truncate: true */
 }).then(() => {
     console.log('Database synced')
     app.listen(PORT, () => {

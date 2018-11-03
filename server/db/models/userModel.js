@@ -9,10 +9,7 @@ module.exports = {
                 args: true,
                 msg: 'is already taken.'
             },
-            allowNull: {
-                args: false,
-                msg: "can't be blank"
-            },
+            allowNull: false,
             validate: {
                 is: {
                     args: /^[a-zA-Z0-9]+$/,
@@ -27,10 +24,7 @@ module.exports = {
                 args: true,
                 msg: 'is already taken.'
             },
-            allowNull: {
-                args: false,
-                msg: "can't be blank"
-            },
+            allowNull: false,
             validate: {
                 isEmail: {
                     args: true,
